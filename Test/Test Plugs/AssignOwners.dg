@@ -13,7 +13,7 @@ threadMetaData = invokeurl
 // Get all operators in Zoho SalesIQ
 operatorFetch = invokeurl
 [
-    url : url + "(https://www.zoho.com/salesiq/help/developer-section/rest-api-v2.html)}/api/v2/" + screenName + "/operators"
+    url : url + "/api/v2/" + screenName + "/operators"
     type :GET
     connection:"salesiqreadchat"
 ];
