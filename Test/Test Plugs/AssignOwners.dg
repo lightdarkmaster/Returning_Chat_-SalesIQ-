@@ -1,0 +1,38 @@
+conversationID = session.get("activated").get("value");
+
+url = "https://salesiq.zoho.com";
+screenName = "dmcihomes5226";
+include = "include_fields=%5B%22metrics%22%2C%20%22attender%22%2C%20%22brand%22%2C%20%22transfer_details%22%5D";
+threadMetaData = invokeurl
+[
+    url :url + "/api/v2/" + screenName + "/conversations/" + conversationID + "/threads?" + include
+    type :GET
+    connection:"salesiqreadchat"
+];
+
+// Get all operators in Zoho SalesIQ
+operatorFetch = invokeurl
+[
+    url : url + "(https://www.zoho.com/salesiq/help/developer-section/rest-api-v2.html)}/api/v2/" + screenName + "/operators"
+    type :GET
+    connection:"salesiqreadchat"
+];
+
+// Assign chat to operators with load balancing
+operatorList = operatorFetch.get("data");
+operatorCount = operatorList.size();
+chatCount = threadMetaData.get("data").size();
+operatorIndex = 0;
+for each threadData in threadMetaData.get("data")
+{
+    if(operatorIndex >= operatorCount)
+    {
+        operatorIndex = 0;
+    }
+    operatorId = operatorList.get(operatorIndex).get("id");
+    updatePayload = Map();
+    updatePayload.put("payload", Map());
+    updatePayload.get("payload").put("operator_id",operatorId);
+    updateResponse = zoho.crm.updateRecord("Leads","6715488000021464393",updatePayload);
+    operatorIndex += 1;
+}
