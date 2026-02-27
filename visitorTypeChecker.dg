@@ -1,0 +1,19 @@
+conversationId = session.get("activeId").get("value");
+// -----------------------------------------------------------------------------------------------
+// Pull Conversation Details
+// -----------------------------------------------------------------------------------------------
+// pushPayload1 = zoho.crm.updateRecord("Leads","6715488000021464393",{"payload":conversationId});
+fetchConvf = invokeurl
+[
+	url :"https://salesiq.zoho.com/api/v2/dmcihomes5226/conversations/" + conversationId
+	type :GET
+	connection:"salesiqreadchat"
+];
+// pushPayload2 = zoho.crm.updateRecord("Leads","6715488000021464393",{"payload_2":fetchConvf});
+statusKey = fetchConvf.get("data").get("chat_status").get("status_key");
+info statusKey;
+response = Map();
+response.put("response",statusKey.toText());
+return response;
+// END
+// -----------------------------------------------------------------------------------------------

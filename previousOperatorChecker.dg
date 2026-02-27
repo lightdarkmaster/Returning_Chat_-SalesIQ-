@@ -1,0 +1,29 @@
+conversationId = session.get("activeId").get("value");
+// -----------------------------------------------------------------------------------------------
+// Pull Thread Details
+// -----------------------------------------------------------------------------------------------
+// pushPayload1 = zoho.crm.updateRecord("Leads","6715488000021464393",{"payload":conversationId});
+url = "https://salesiq.zoho.com";
+screenName = "dmcihomes5226";
+include = "include_fields=%5B%22metrics%22%2C%20%22attender%22%2C%20%22brand%22%2C%20%22transfer_details%22%5D";
+threadMetaData = invokeurl
+[
+	url :url + "/api/v2/" + screenName + "/conversations/" + conversationId + "/threads?" + include
+	type :GET
+	connection:"salesiqreadchat"
+];
+// pushPayload2 = zoho.crm.updateRecord("Leads","6715488000021464393",{"payload_2":threadMetaData});
+for each  threadData in threadMetaData.get("data")
+{
+	if(threadData.get("thread_number") == "1")
+	{
+		operatorId = threadData.get("attender").get("id");
+	}
+}
+// Get Operator Email
+// operatorId = "miguinto@dmcihomes.com";
+response = Map();
+response.put("response",operatorId);
+return response;
+// END
+// -----------------------------------------------------------------------------------------------
