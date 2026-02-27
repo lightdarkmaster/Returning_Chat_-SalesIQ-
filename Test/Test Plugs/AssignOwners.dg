@@ -22,6 +22,15 @@ operatorFetch = invokeurl
 operatorList = operatorFetch.get("data");
 operatorCount = operatorList.size();
 chatCount = threadMetaData.get("data").size();
+
+// Initialize a map to store the chat count for each operator
+operatorChatCount = Map();
+for each operator in operatorList
+{
+    operatorChatCount.put(operator.get("id"),0);
+}
+
+// Assign the next chat to the operators with less load of chat
 operatorIndex = 0;
 for each threadData in threadMetaData.get("data")
 {
@@ -30,9 +39,23 @@ for each threadData in threadMetaData.get("data")
         operatorIndex = 0;
     }
     operatorId = operatorList.get(operatorIndex).get("id");
+    currentChatCount = operatorChatCount.get(operatorId);
+    minChatCount = currentChatCount;
+    minOperatorId = operatorId;
+    for each operator in operatorList
+    {
+        chatCount = operatorChatCount.get(operator.get("id"));
+        if(chatCount < minChatCount)
+        {
+            minChatCount = chatCount;
+            minOperatorId = operator.get("id");
+        }
+    }
     updatePayload = Map();
     updatePayload.put("payload", Map());
-    updatePayload.get("payload").put("operator_id",operatorId);
+    updatePayload.get("payload").put("operator_id",minOperatorId);
     updateResponse = zoho.crm.updateRecord("Leads","6715488000021464393",updatePayload);
+    operatorChatCount.put(minOperatorId,minChatCount+1);
     operatorIndex += 1;
 }
+
